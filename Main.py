@@ -1,4 +1,5 @@
 from Scene import *
+from Lib import *
 
 # Pygame init
 pygame.init()
@@ -6,19 +7,6 @@ display_info = pygame.display.Info()
 
 # Constants
 SCREEN_SIZE = (display_info.current_w, display_info.current_h)
-BACKGROUND_COLOUR = pygame.Color("GRAY")
-BUTTON_COLOUR = pygame.Color(66, 235, 244, 0)  # AQUA
-TEXT_COLOUR = pygame.Color("WHITE")
-
-# Custom Events
-EVENT_STATE_CHANGED = pygame.USEREVENT + 1
-
-# Game states
-STATE_MAIN_MENU = 1
-STATE_PRE_WAVE = 2
-STATE_WAVE = 3
-STATE_PAUSED = 4
-STATE_GAME_OVER = 5
 
 # Setup scenes
 SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, BUTTON_COLOUR, TEXT_COLOUR)
@@ -30,8 +18,6 @@ clock = pygame.time.Clock()
 done = False
 current_state = STATE_MAIN_MENU
 current_scene = SCENE_MAIN_MENU
-sprites = pygame.sprite.Group()
-enemies = pygame.sprite.Group()
 
 # Main loop
 while not done:
@@ -39,10 +25,7 @@ while not done:
     screen.fill(BACKGROUND_COLOUR)
 
     # Process and render current scene
-    if current_state == STATE_MAIN_MENU:
-        current_scene.render(screen)
-    if current_state == STATE_PRE_WAVE or current_state == STATE_WAVE:
-        current_scene.render(screen)
+    current_scene.render(screen)
 
     # Handle events
     for event in pygame.event.get():

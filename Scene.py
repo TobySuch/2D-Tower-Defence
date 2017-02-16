@@ -1,4 +1,5 @@
 from UI import *
+from Lib import *
 
 
 class Scene:
@@ -7,7 +8,7 @@ class Scene:
         pass
 
     def render(self, screen):
-        """Override in child classes"""
+        """Meant to be called once a frame. Override in child classes"""
         pass
 
 
@@ -29,9 +30,34 @@ class Game(Scene):
         self.rect = pygame.Rect(100, 100, screen_size[0] - 200, screen_size[1] - 200)
         self.game_screen = pygame.Surface((self.rect.width, self.rect.height))
 
-    def render(self, screen, player, enemies):
-        player.update()
-        enemies.update()
-        self.game_screen.fill(pygame.Color("BLACK"))
-        self.game_screen.blit(player.image, player.rect.topleft)
+        # Groups for sprites
+        self.towers = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
+        self.effects = pygame.sprite.Group()
+
+        # Game variables
+        self.lives = 20
+        self.money = 200
+        self.path = Path(pygame.Color("BLUE"),
+                         [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
+                          (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11),(7, 11), (7, 8), (5, 8),
+                          (5, 11), (3, 11), (3, 8), (-1, 8)])
+
+    def render(self, screen):
+        screen.fill(pygame.Color("BLACK"))
+        self.game_screen.fill(pygame.Color("GRAY"))
+        self.game_screen.blit(self.path.image, (0, 0))
+        # Update mouse selector
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pos = (mouse_pos[0]-100, mouse_pos[1]-100)  # To account for the 100x100 border around the outside
+        if not self.path.contains(mouse_pos):
+            if mouse_pos[0] < self.screen_size[0] and mouse_pos[1] < self.screen_size[1]:
+                if pygame.mouse.get_pressed()[0]:
+                    size = 5
+                else:
+                    size = 2
+                pygame.draw.rect(self.game_screen, pygame.Color("WHITE"),
+                                 pygame.Rect(mouse_pos[0] - (mouse_pos[0] % 50),
+                                 mouse_pos[1] - (mouse_pos[1] % 50),
+                                 50, 50), size)
         screen.blit(self.game_screen, self.rect)
