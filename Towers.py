@@ -1,6 +1,8 @@
 from Lib import *
 from Effects import *
 
+TOWER_BASIC = 1
+TOWER_SNIPER = 2
 
 def createTower(pos, path, towers):
     if not path.contains(pos):  # Check point is not on path

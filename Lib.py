@@ -1,10 +1,14 @@
 import pygame, math
 
 # Colours
+FRAME_COLOUR = pygame.Color("BLACK")
 BACKGROUND_COLOUR = pygame.Color("GRAY")
 BUTTON_COLOUR = pygame.Color(66, 235, 244, 0)  # AQUA
 TEXT_COLOUR = pygame.Color("WHITE")
 TOOLBAR_COLOUR = pygame.Color(60, 60, 60, 0)  # Dark Grey
+
+# Global variables
+GRID_SIZE = 50
 
 # Directions
 NORTH = 0
@@ -68,9 +72,9 @@ class Path(pygame.sprite.Sprite):
                 highest_x = point[0]
             if point[1] > highest_y:
                 highest_y = point[1]
-        print((highest_x, highest_y))
 
-        self.image = pygame.Surface(((highest_x+1)*50, (highest_y+1)*50), pygame.SRCALPHA)
+        self.image = pygame.Surface(((highest_x+3)*GRID_SIZE, (highest_y+3)*GRID_SIZE))
+        self.image.fill(BACKGROUND_COLOUR)
         self.rect = self.image.get_rect()
 
         self.colour = colour

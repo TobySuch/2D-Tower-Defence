@@ -1,5 +1,6 @@
 from UI import *
 from Lib import *
+from Towers import *
 
 
 class Scene:
@@ -38,6 +39,7 @@ class Game(Scene):
         # Game variables
         self.lives = 20
         self.money = 200
+        self.selected_tower = TOWER_BASIC
         self.path = Path(pygame.Color("BLUE"),
                          [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
                           (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11),(7, 11), (7, 8), (5, 8),
@@ -45,19 +47,21 @@ class Game(Scene):
 
     def render(self, screen):
         screen.fill(pygame.Color("BLACK"))
-        self.game_screen.fill(pygame.Color("GRAY"))
+        self.game_screen.fill(FRAME_COLOUR)
         self.game_screen.blit(self.path.image, (0, 0))
+        self.towers.draw(self.game_screen)
+
         # Update mouse selector
         mouse_pos = pygame.mouse.get_pos()
-        mouse_pos = (mouse_pos[0]-100, mouse_pos[1]-100)  # To account for the 100x100 border around the outside
+        mouse_pos = (mouse_pos[0] - 100, mouse_pos[1] - 100)  # To account for the 100x100 border around the outside
         if not self.path.contains(mouse_pos):
-            if mouse_pos[0] < self.screen_size[0] and mouse_pos[1] < self.screen_size[1]:
+            if mouse_pos[0] < self.path.rect.width and mouse_pos[1] < self.path.rect.height:
                 if pygame.mouse.get_pressed()[0]:
                     size = 5
                 else:
                     size = 2
                 pygame.draw.rect(self.game_screen, pygame.Color("WHITE"),
-                                 pygame.Rect(mouse_pos[0] - (mouse_pos[0] % 50),
-                                 mouse_pos[1] - (mouse_pos[1] % 50),
-                                 50, 50), size)
+                                 pygame.Rect(mouse_pos[0] - (mouse_pos[0] % GRID_SIZE),
+                                 mouse_pos[1] - (mouse_pos[1] % GRID_SIZE),
+                                 GRID_SIZE, GRID_SIZE), size)
         screen.blit(self.game_screen, self.rect)

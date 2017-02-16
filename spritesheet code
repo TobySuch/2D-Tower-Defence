@@ -1,0 +1,7 @@
+    def load_spritesheet(self, file_name, sprite_width, sprite_height):
+        sheet = pygame.image.load("assets/" + file_name).convert()
+        for y in range(0, sheet.get_height(), sprite_height):
+            for x in range(0, sheet.get_width(), sprite_width):
+                sprite = pygame.Surface((sprite_width, sprite_height))
+                sprite.blit(sheet, (0, 0), pygame.Rect(x, y, sprite_width, sprite_height))
+                self.images.append(sprite)

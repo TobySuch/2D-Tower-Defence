@@ -57,7 +57,16 @@ while not done:
 
         # In game events
         elif current_scene == SCENE_GAME:
-            pass
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    mouse_pos = (event.pos[0] - 100, event.pos[1] - 100)  # To account for the 100x100 border around the outside
+                    if not SCENE_GAME.path.contains(mouse_pos):
+                        if mouse_pos[0] < SCENE_GAME.path.rect.width and mouse_pos[1] < SCENE_GAME.path.rect.height:
+                            tower = createTower(gridCoordToPos(posToGridCoords(mouse_pos, GRID_SIZE), GRID_SIZE), SCENE_GAME.path, SCENE_GAME.towers)
+                            if tower is not None and tower.value <= SCENE_GAME.money:
+                                SCENE_GAME.towers.add(tower)
+                                SCENE_GAME.money -= tower.value
+                                print(tower.rect.center)
 
     # Display frame
     pygame.display.flip()
