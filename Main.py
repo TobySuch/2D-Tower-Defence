@@ -1,4 +1,5 @@
 from Scene import *
+from Characters import *
 
 # Pygame init
 pygame.init()
@@ -30,6 +31,7 @@ clock = pygame.time.Clock()
 done = False
 current_state = STATE_MAIN_MENU
 current_scene = SCENE_MAIN_MENU
+player = Character((0, 0), "colours.png", 20, 20)
 sprites = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 
@@ -42,7 +44,7 @@ while not done:
     if current_state == STATE_MAIN_MENU:
         current_scene.render(screen)
     if current_state == STATE_PLAYERS_TURN or current_state == STATE_ENEMY_TURN:
-        current_scene.render(sprites)
+        current_scene.render(screen, player, enemies)
 
     # Handle events
     for event in pygame.event.get():

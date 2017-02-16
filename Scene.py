@@ -30,5 +30,8 @@ class Game(Scene):
         self.game_screen = pygame.Surface((self.rect.width, self.rect.height))
 
     def render(self, screen, player, enemies):
+        player.update()
+        enemies.update()
         self.game_screen.fill(pygame.Color("BLACK"))
+        self.game_screen.blit(player.image, player.rect.topleft)
         screen.blit(self.game_screen, self.rect)
