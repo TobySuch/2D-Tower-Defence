@@ -8,13 +8,15 @@ display_info = pygame.display.Info()
 # Constants
 SCREEN_SIZE = (display_info.current_w, display_info.current_h)
 
-# Setup scenes
-SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, BUTTON_COLOUR, TEXT_COLOUR)
-SCENE_GAME = None  # This scene is not initialised as it will be reset when they click play
-
 # Global variables
 screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
 clock = pygame.time.Clock()
+
+# Setup scenes
+SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, screen, BUTTON_COLOUR, TEXT_COLOUR)
+SCENE_GAME = None  # This scene is not initialised as it will be reset when they click play
+
+# State holders
 done = False
 current_state = STATE_MAIN_MENU
 current_scene = SCENE_MAIN_MENU
@@ -42,7 +44,7 @@ while not done:
                 elif current_state == STATE_PAUSED:
                     pass
                 else:
-                    SCENE_GAME = Game(SCREEN_SIZE)  # Creates a new game instance
+                    SCENE_GAME = Game(SCREEN_SIZE, screen)  # Creates a new game instance
                     current_scene = SCENE_GAME
                     current_state = STATE_PRE_WAVE
 

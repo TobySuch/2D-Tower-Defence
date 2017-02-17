@@ -4,32 +4,40 @@ from Towers import *
 
 
 class Scene:
-    def __init__(self):
+    def __init__(self, screen_size, screen):
         """Override in child classes"""
-        pass
+        # Creates a sub surface as the game screen.
+        # This means anything blitted to the game screen is automatically put on the screen
+        # Also handles relative coords with get_abs_offset()
+        self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
+        self.game_screen = screen.subsurface(self.rect)
 
     def render(self, screen):
-        """Meant to be called once a frame. Override in child classes"""
+        """Updates and renders the scene. Meant to be called once a frame. Override in child classes"""
         pass
 
 
 class MainMenu(Scene):
-    def __init__(self, screen_size, button_colour, text_colour):
+    def __init__(self, screen_size, screen, button_colour, text_colour):
+        self.rect = pygame.Rect(0, 0, screen_size[0], screen_size[1])
+        self.menu_screen = screen.subsurface(self.rect)
+
         self.play_button = Button(pygame.Rect((screen_size[0]/2) - 600, (screen_size[1]/2) - 100, 400, 200),
                                   "Play", button_colour, text_colour)
         self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 200, (screen_size[1]/2) - 100, 400, 200),
                                   "Quit", button_colour, text_colour)
 
     def render(self, screen):
-        screen.blit(self.play_button.image, self.play_button.rect)
-        screen.blit(self.quit_button.image, self.quit_button.rect)
+        self.menu_screen.blit(self.play_button.image, self.play_button.rect)
+        self.menu_screen.blit(self.quit_button.image, self.quit_button.rect)
 
 
 class Game(Scene):
-    def __init__(self, screen_size):
+    def __init__(self, screen_size, screen):
         self.screen_size = screen_size
-        self.rect = pygame.Rect(100, 100, screen_size[0] - 200, screen_size[1] - 200)
-        self.game_screen = pygame.Surface((self.rect.width, self.rect.height))
+        self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
+        self.game_screen = screen.subsurface(self.rect)
+        self.offset = self.game_screen.get_abs_offset()
 
         # Groups for sprites
         self.towers = pygame.sprite.Group()
@@ -53,7 +61,8 @@ class Game(Scene):
 
         # Update mouse selector
         mouse_pos = pygame.mouse.get_pos()
-        mouse_pos = (mouse_pos[0] - 100, mouse_pos[1] - 100)  # To account for the 100x100 border around the outside
+
+        mouse_pos = (mouse_pos[0]-self.offset[0], mouse_pos[1]-self.offset[1])  # Accounts for the border
         if not self.path.contains(mouse_pos):
             if mouse_pos[0] < self.path.rect.width and mouse_pos[1] < self.path.rect.height:
                 if pygame.mouse.get_pressed()[0]:
@@ -64,4 +73,3 @@ class Game(Scene):
                                  pygame.Rect(mouse_pos[0] - (mouse_pos[0] % GRID_SIZE),
                                  mouse_pos[1] - (mouse_pos[1] % GRID_SIZE),
                                  GRID_SIZE, GRID_SIZE), size)
-        screen.blit(self.game_screen, self.rect)
