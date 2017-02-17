@@ -4,6 +4,7 @@ from Effects import *
 TOWER_BASIC = 1
 TOWER_SNIPER = 2
 
+
 def createTower(pos, path, towers):
     if not path.contains(pos):  # Check point is not on path
         for tower in towers.sprites():  # Check tower does not already exist there
@@ -27,7 +28,7 @@ class Tower(pygame.sprite.Sprite):
         self.value = value
         self.fire_colour = fire_colour
 
-    def update(self, enemies, effects, screen, grid_size):
+    def update(self, enemies, effects, screen):
         if self.last_fired <= self.fire_rate:
             self.last_fired += 1
         else:
@@ -36,7 +37,7 @@ class Tower(pygame.sprite.Sprite):
             for sprite in enemies.sprites():
                 if not sprite.is_dead:
                     distance = getDistance(self.rect.center, sprite.rect.center)
-                    if distance <= self.range * grid_size + 1:
+                    if distance <= self.range * GRID_SIZE + 1:
                         if target is None or sprite.distance_travelled > target.distance_travelled:
                             target = sprite
             if target is not None:
