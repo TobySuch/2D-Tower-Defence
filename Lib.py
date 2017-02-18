@@ -6,18 +6,16 @@ BACKGROUND_COLOUR = pygame.Color("GRAY")
 BUTTON_COLOUR = pygame.Color(66, 235, 244, 0)  # AQUA
 TEXT_COLOUR = pygame.Color("WHITE")
 TOOLBAR_COLOUR = pygame.Color(60, 60, 60, 0)  # Dark Grey
+BUTTON_DISABLED_COLOUR = pygame.Color("RED")
+PATH_COLOUR = pygame.Color("BLUE")
 
 # Global variables
 GRID_SIZE = 50
 
 # Directions
-NORTH = 0
 UP = 0
-EAST = 1
 RIGHT = 1
-SOUTH = 2
 DOWN = 2
-WEST = 3
 LEFT = 3
 
 # Game states
@@ -29,10 +27,9 @@ STATE_GAME_OVER = 5
 
 # Custom events
 ENEMY_REACHED_END = pygame.USEREVENT+1
-WAVE_STARTED = pygame.USEREVENT+2
-ENEMY_KILLED = pygame.USEREVENT+3
-TOWER_BOUGHT = pygame.USEREVENT+4
-EVENT_STATE_CHANGED = pygame.USEREVENT+5
+ENEMY_KILLED = pygame.USEREVENT+2
+TOWER_BOUGHT = pygame.USEREVENT+3
+EVENT_STATE_CHANGED = pygame.USEREVENT+4
 
 
 def posToGridCoords(pos, grid_size):
@@ -50,14 +47,14 @@ def getDistance(pos1, pos2):
 def getDirection(pos1, pos2):
     if abs(pos1[0]-pos2[0]) > abs(pos1[1]-pos2[1]):
         if pos1[0] > pos2[0]:
-            return WEST
+            return LEFT
         else:
-            return EAST
+            return RIGHT
     else:
         if pos1[1] > pos2[1]:
-            return NORTH
+            return UP
         else:
-            return SOUTH
+            return DOWN
 
 
 class Path(pygame.sprite.Sprite):

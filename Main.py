@@ -40,19 +40,25 @@ while not done:
         elif event.type == EVENT_STATE_CHANGED:
             if event.next_state == STATE_PRE_WAVE:
                 if current_state == STATE_WAVE:
-                    pass
+                    # Wave just ended
+                    current_state = STATE_PRE_WAVE
+                    SCENE_GAME.next_wave_button.background_colour = BUTTON_COLOUR
+                    SCENE_GAME.pause_button.background_colour = BUTTON_DISABLED_COLOUR
+
                 elif current_state == STATE_PAUSED:
+                    # Game unpaused
                     pass
                 else:
+                    # New game
                     SCENE_GAME = Game(SCREEN_SIZE, screen)  # Creates a new game instance
                     current_scene = SCENE_GAME
                     current_state = STATE_PRE_WAVE
             elif event.next_state == STATE_WAVE:
                 current_state = STATE_WAVE
                 SCENE_GAME.wave_handler.start_wave()
-                SCENE_GAME.next_wave_button.background_colour = pygame.Color("RED")
+                SCENE_GAME.next_wave_button.background_colour = BUTTON_DISABLED_COLOUR
                 SCENE_GAME.enemies_alive = SCENE_GAME.wave_handler.current_wave.enemies
-                # TODO: Enable pause button
+                SCENE_GAME.pause_button.background_colour = BUTTON_COLOUR
 
         # Main menu events
         if current_scene == SCENE_MAIN_MENU:
@@ -84,6 +90,8 @@ while not done:
                 SCENE_GAME.enemies_alive -= 1
                 SCENE_GAME.money += event.enemy.value
                 event.enemy.kill()
+                if SCENE_GAME.enemies_alive <= 0:
+                    pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PRE_WAVE))
             elif event.type == ENEMY_REACHED_END:
                 SCENE_GAME.lives -= 1
                 if SCENE_GAME.lives <= 0:

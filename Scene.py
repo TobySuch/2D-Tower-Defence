@@ -47,12 +47,13 @@ class Game(Scene):
 
         #Buttons
         self.next_wave_button = Button(pygame.Rect(100, 25, 200, 50), "Next Wave", BUTTON_COLOUR, TEXT_COLOUR, 45)
+        self.pause_button = Button(pygame.Rect(310, 25, 110, 50), "Pause", BUTTON_DISABLED_COLOUR, TEXT_COLOUR, 45)
 
         # Game variables
         self.lives = 20
         self.money = 200
         self.selected_tower = TOWER_BASIC
-        self.path = Path(pygame.Color("BLUE"),
+        self.path = Path(PATH_COLOUR,
                          [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
                           (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11),(7, 11), (7, 8), (5, 8),
                           (5, 11), (3, 11), (3, 8), (-1, 8)])
@@ -65,6 +66,7 @@ class Game(Scene):
 
         # Render Buttons
         screen.blit(self.next_wave_button.image, self.next_wave_button.rect)
+        screen.blit(self.pause_button.image, self.pause_button.rect)
 
         # Render Game
         self.game_screen.fill(FRAME_COLOUR)

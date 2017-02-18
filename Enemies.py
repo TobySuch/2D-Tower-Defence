@@ -48,14 +48,14 @@ class Enemy(pygame.sprite.Sprite):
 
         # Move towards next waypoint
         self.distance_travelled += self.speed
-        if self.direction == NORTH:
+        if self.direction == UP:
             self.rect.move_ip((0, -self.speed))
             # Moves sprite into the middle of the path, not ideal but whatever
             self.rect.centerx = waypoint[0]*grid_size + grid_size//2
-        elif self.direction == WEST:
+        elif self.direction == LEFT:
             self.rect.move_ip((-self.speed, 0))
             self.rect.centery = waypoint[1] * grid_size + grid_size // 2
-        elif self.direction == SOUTH:
+        elif self.direction == DOWN:
             self.rect.move_ip((0, self.speed))
             self.rect.centerx = waypoint[0] * grid_size + grid_size // 2
         else:
