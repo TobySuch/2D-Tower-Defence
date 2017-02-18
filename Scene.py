@@ -13,8 +13,12 @@ class Scene:
         self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
         self.game_screen = screen.subsurface(self.rect)
 
+    def update(self, **kwargs):
+        """Updates the scene. Meant to be called once a frame. Override in child classes"""
+        pass
+
     def render(self, **kwargs):
-        """Updates and renders the scene. Meant to be called once a frame. Override in child classes"""
+        """Renders the scene. Meant to be called once a frame. Override in child classes"""
         pass
 
 
@@ -33,6 +37,17 @@ class MainMenu(Scene):
         self.menu_screen.blit(self.quit_button.image, self.quit_button.rect)
 
 
+class Pause(Scene):
+    def __init__(self, screen_size, screen):
+        self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
+        self.pause_overlay = screen.subsurface(self.rect)
+        self.pause_message = TextDisplay(pygame.Rect(0, 0, 1000, 500), "PAUSED", TEXT_COLOUR, 50)
+
+    def render(self, **kwargs):
+        kwargs["SCENE_GAME"].render(screen=kwargs["screen"], current_state=kwargs["current_state"])
+        self.pause_overlay.blit(self.pause_message.image, self.pause_message.rect)
+
+
 class Game(Scene):
     def __init__(self, screen_size, screen):
         self.screen_size = screen_size
@@ -45,51 +60,61 @@ class Game(Scene):
         self.enemies = pygame.sprite.Group()
         self.effects = pygame.sprite.Group()
 
-        #Buttons
-        self.next_wave_button = Button(pygame.Rect(100, 25, 200, 50), "Next Wave", BUTTON_COLOUR, TEXT_COLOUR, 45)
-        self.pause_button = Button(pygame.Rect(310, 25, 110, 50), "Pause", BUTTON_DISABLED_COLOUR, TEXT_COLOUR, 45)
-
         # Game variables
         self.lives = 20
         self.money = 200
         self.selected_tower = TOWER_BASIC
         self.path = Path(PATH_COLOUR,
                          [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
-                          (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11),(7, 11), (7, 8), (5, 8),
+                          (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11), (7, 11), (7, 8), (5, 8),
                           (5, 11), (3, 11), (3, 8), (-1, 8)])
         self.wave_handler = WaveHandler(self.path.waypoints[0])
         self.enemies_alive = 0
+
+        # Toolbar items
+        self.next_wave_button = Button(pygame.Rect(100, 25, 160, 50), "Next Wave", BUTTON_COLOUR, TEXT_COLOUR, 40)
+        self.pause_button = Button(pygame.Rect(270, 25, 95, 50), "Pause", BUTTON_DISABLED_COLOUR, TEXT_COLOUR, 40)
+        self.wave_display = TextDisplay(pygame.Rect(375, 25, 210, 50), "Current Wave: " + str(self.wave_handler.current_wave_number), TEXT_COLOUR, 30)
+        self.enemy_count_display = TextDisplay(pygame.Rect(595, 25, 280, 50), "Enemies Remaining: " + str(self.enemies_alive), TEXT_COLOUR, 30)
+        self.lives_display = TextDisplay(pygame.Rect(885, 25, 120, 50), "Lives: " + str(self.lives), TEXT_COLOUR, 30)
+
+    def update(self, **kwargs):
+        self.wave_handler.update(self.enemies)
+        self.enemies.update(self.path.waypoints, GRID_SIZE)
+        self.towers.update(self.enemies, self.effects, self.game_screen)
+        self.effects.update()
 
     def render(self, **kwargs):
         screen = kwargs['screen']
         screen.fill(pygame.Color("BLACK"))
 
-        # Render Buttons
+        # Render Toolbar
         screen.blit(self.next_wave_button.image, self.next_wave_button.rect)
         screen.blit(self.pause_button.image, self.pause_button.rect)
+        screen.blit(self.wave_display.image, self.wave_display.rect)
+        screen.blit(self.enemy_count_display.image, self.enemy_count_display.rect)
+        screen.blit(self.lives_display.image, self.lives_display.rect)
 
         # Render Game
         self.game_screen.fill(FRAME_COLOUR)
         self.game_screen.blit(self.path.image, (0, 0))
-        self.wave_handler.update(self.enemies)
-        self.enemies.update(self.path.waypoints, GRID_SIZE)
-        self.towers.update(self.enemies, self.effects, self.game_screen)
-        self.effects.update()
         self.enemies.draw(self.game_screen)
         self.towers.draw(self.game_screen)
         self.effects.draw(self.game_screen)
 
         # Update mouse selector
-        mouse_pos = pygame.mouse.get_pos()
+        if kwargs["current_state"] != STATE_PAUSED:
+            mouse_pos = pygame.mouse.get_pos()
 
-        mouse_pos = (mouse_pos[0]-self.offset[0], mouse_pos[1]-self.offset[1])  # Accounts for the border
-        if not self.path.contains(mouse_pos):
-            if 0 < mouse_pos[0] < self.path.rect.width and 0 < mouse_pos[1] < self.path.rect.height:
-                if pygame.mouse.get_pressed()[0]:
-                    size = 5
-                else:
-                    size = 2
-                pygame.draw.rect(self.game_screen, pygame.Color("WHITE"),
-                                 pygame.Rect(mouse_pos[0] - (mouse_pos[0] % GRID_SIZE),
-                                 mouse_pos[1] - (mouse_pos[1] % GRID_SIZE),
-                                 GRID_SIZE, GRID_SIZE), size)
+            mouse_pos = (mouse_pos[0] - self.offset[0], mouse_pos[1] - self.offset[1])  # Accounts for the border
+            if not self.path.contains(mouse_pos):
+                if 0 < mouse_pos[0] < self.path.rect.width and 0 < mouse_pos[1] < self.path.rect.height:
+                    if pygame.mouse.get_pressed()[0]:
+                        size = 5
+                    else:
+                        size = 2
+                    pygame.draw.rect(self.game_screen, pygame.Color("WHITE"),
+                                     pygame.Rect(mouse_pos[0] - (mouse_pos[0] % GRID_SIZE),
+                                                 mouse_pos[1] - (mouse_pos[1] % GRID_SIZE),
+                                                 GRID_SIZE, GRID_SIZE), size)
+

@@ -15,6 +15,7 @@ clock = pygame.time.Clock()
 # Setup scenes
 SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, screen)
 SCENE_GAME = None  # This scene is not initialised as it will be reset when they click play
+SCENE_PAUSE = Pause(SCREEN_SIZE, screen)
 
 # State holders
 done = False
@@ -26,8 +27,11 @@ while not done:
     # Wipe currently displayed scene
     screen.fill(BACKGROUND_COLOUR)
 
-    # Process and render current scene
-    current_scene.render(screen=screen)
+    # Update current scene
+    current_scene.update()
+
+    # Render current scene
+    current_scene.render(screen=screen, current_state=current_state, SCENE_GAME=SCENE_GAME)
 
     # Handle events
     for event in pygame.event.get():
@@ -44,9 +48,9 @@ while not done:
                     current_state = STATE_PRE_WAVE
                     SCENE_GAME.next_wave_button.background_colour = BUTTON_COLOUR
                     SCENE_GAME.pause_button.background_colour = BUTTON_DISABLED_COLOUR
-
                 elif current_state == STATE_PAUSED:
                     # Game unpaused
+                    # TODO: Implement Paused
                     pass
                 else:
                     # New game
@@ -58,7 +62,15 @@ while not done:
                 SCENE_GAME.wave_handler.start_wave()
                 SCENE_GAME.next_wave_button.background_colour = BUTTON_DISABLED_COLOUR
                 SCENE_GAME.enemies_alive = SCENE_GAME.wave_handler.current_wave.enemies
+                SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)
                 SCENE_GAME.pause_button.background_colour = BUTTON_COLOUR
+                SCENE_GAME.wave_display.text = "Current Wave: " + str(SCENE_GAME.wave_handler.current_wave_number)
+            elif event.next_state == STATE_PAUSED:
+                current_state = STATE_PAUSED
+                SCENE_GAME.pause_button.background_colour = BUTTON_DISABLED_COLOUR
+                current_scene = SCENE_PAUSE
+
+
 
         # Main menu events
         if current_scene == SCENE_MAIN_MENU:
@@ -77,6 +89,9 @@ while not done:
                     if SCENE_GAME.next_wave_button.contains(event.pos):
                         if current_state == STATE_PRE_WAVE:  # Button can only be pressed during pre-wave
                             pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_WAVE))
+                    elif SCENE_GAME.pause_button.contains(event.pos):
+                        if current_state == STATE_WAVE:  # Button can only be pressed during the wave
+                            pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PAUSED))
                     else:
                         # Placed a tower
                         mouse_pos = (event.pos[0]-SCENE_GAME.offset[0], event.pos[1]-SCENE_GAME.offset[1])  # To account for the 100x100 border around the outside
@@ -88,14 +103,17 @@ while not done:
                                     SCENE_GAME.money -= tower.value
             elif event.type == ENEMY_KILLED:
                 SCENE_GAME.enemies_alive -= 1
+                SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)
                 SCENE_GAME.money += event.enemy.value
                 event.enemy.kill()
                 if SCENE_GAME.enemies_alive <= 0:
                     pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PRE_WAVE))
             elif event.type == ENEMY_REACHED_END:
                 SCENE_GAME.lives -= 1
+                SCENE_GAME.lives_display.text = "Lives: " + str(SCENE_GAME.lives)
                 if SCENE_GAME.lives <= 0:
                     # Game Over
+                    # TODO: Implement Game Over
                     pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_GAME_OVER))
                 else:
                     # Move the enemy back to the start

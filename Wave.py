@@ -21,7 +21,7 @@ class Wave:
 
 
 class WaveHandler:
-    def __init__(self, spawn_loc, start_wave=1):
+    def __init__(self, spawn_loc, start_wave=0):
         self.spawn_loc = spawn_loc
         self.current_wave_number = start_wave
         self.current_wave = None
