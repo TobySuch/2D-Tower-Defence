@@ -48,29 +48,33 @@ while not done:
                     current_state = STATE_PRE_WAVE
                     SCENE_GAME.next_wave_button.background_colour = BUTTON_COLOUR
                     SCENE_GAME.pause_button.background_colour = BUTTON_DISABLED_COLOUR
-                elif current_state == STATE_PAUSED:
-                    # Game unpaused
-                    # TODO: Implement Paused
-                    pass
                 else:
                     # New game
                     SCENE_GAME = Game(SCREEN_SIZE, screen)  # Creates a new game instance
                     current_scene = SCENE_GAME
                     current_state = STATE_PRE_WAVE
             elif event.next_state == STATE_WAVE:
-                current_state = STATE_WAVE
-                SCENE_GAME.wave_handler.start_wave()
-                SCENE_GAME.next_wave_button.background_colour = BUTTON_DISABLED_COLOUR
-                SCENE_GAME.enemies_alive = SCENE_GAME.wave_handler.current_wave.enemies
-                SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)
-                SCENE_GAME.pause_button.background_colour = BUTTON_COLOUR
-                SCENE_GAME.wave_display.text = "Current Wave: " + str(SCENE_GAME.wave_handler.current_wave_number)
+                if current_state == STATE_PAUSED:
+                    # Game unpaused
+                    current_state = STATE_WAVE
+                    SCENE_GAME.pause_button.background_colour = BUTTON_COLOUR
+                    current_scene = SCENE_GAME
+                else:
+                    # Wave just started
+                    current_state = STATE_WAVE
+                    SCENE_GAME.wave_handler.start_wave()
+                    SCENE_GAME.next_wave_button.background_colour = BUTTON_DISABLED_COLOUR
+                    SCENE_GAME.enemies_alive = SCENE_GAME.wave_handler.current_wave.enemies
+                    SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)
+                    SCENE_GAME.pause_button.background_colour = BUTTON_COLOUR
+                    SCENE_GAME.wave_display.text = "Current Wave: " + str(SCENE_GAME.wave_handler.current_wave_number)
             elif event.next_state == STATE_PAUSED:
                 current_state = STATE_PAUSED
                 SCENE_GAME.pause_button.background_colour = BUTTON_DISABLED_COLOUR
                 current_scene = SCENE_PAUSE
-
-
+            elif event.next_state == STATE_MAIN_MENU:
+                current_state = STATE_MAIN_MENU
+                current_scene = SCENE_MAIN_MENU
 
         # Main menu events
         if current_scene == SCENE_MAIN_MENU:
@@ -80,6 +84,15 @@ while not done:
                         pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PRE_WAVE))
                     elif SCENE_MAIN_MENU.quit_button.contains(event.pos):
                         pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+        # Pause menu events
+        if current_scene == SCENE_PAUSE:
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    if SCENE_PAUSE.resume_button.contains(adjustCoordsByOffset(event.pos, SCENE_GAME.offset)):
+                        pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_WAVE))
+                    elif SCENE_PAUSE.quit_button.contains(adjustCoordsByOffset(event.pos, SCENE_GAME.offset)):
+                        pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_MAIN_MENU))
 
         # In game events
         elif current_scene == SCENE_GAME:

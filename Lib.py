@@ -8,6 +8,7 @@ TEXT_COLOUR = pygame.Color("WHITE")
 TOOLBAR_COLOUR = pygame.Color(60, 60, 60, 0)  # Dark Grey
 BUTTON_DISABLED_COLOUR = pygame.Color("RED")
 PATH_COLOUR = pygame.Color("BLUE")
+MOUSE_SELECTOR_COLOUR = pygame.Color("WHITE")
 
 # Global variables
 GRID_SIZE = 50
@@ -30,6 +31,10 @@ ENEMY_REACHED_END = pygame.USEREVENT+1
 ENEMY_KILLED = pygame.USEREVENT+2
 TOWER_BOUGHT = pygame.USEREVENT+3
 EVENT_STATE_CHANGED = pygame.USEREVENT+4
+
+
+def adjustCoordsByOffset(coords, offset):
+    return tuple([coords[0]-offset[0], coords[1]-offset[1]])
 
 
 def posToGridCoords(pos, grid_size):

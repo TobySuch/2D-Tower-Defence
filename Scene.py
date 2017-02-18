@@ -8,7 +8,7 @@ class Scene:
     def __init__(self, screen_size, screen):
         """Override in child classes"""
         # Creates a sub surface as the game screen.
-        # This means anything blitted to the game screen is automatically put on the screen
+        # This means anything blitted to the game screen is automatically put on the screen (more efficient)
         # Also handles relative coords with get_abs_offset()
         self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
         self.game_screen = screen.subsurface(self.rect)
@@ -41,11 +41,17 @@ class Pause(Scene):
     def __init__(self, screen_size, screen):
         self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
         self.pause_overlay = screen.subsurface(self.rect)
-        self.pause_message = TextDisplay(pygame.Rect(0, 0, 1000, 500), "PAUSED", TEXT_COLOUR, 50)
+        self.pause_message = TextDisplay(pygame.Rect(360, 200, 180, 60), "PAUSED", TEXT_COLOUR, 50)
+        self.resume_button = Button(pygame.Rect(225, 340, 200, 75),
+                                    "Resume", BUTTON_COLOUR, TEXT_COLOUR, 50)
+        self.quit_button = Button(pygame.Rect(475, 340, 200, 75),
+                                  "Quit", BUTTON_COLOUR, TEXT_COLOUR, 50)
 
     def render(self, **kwargs):
         kwargs["SCENE_GAME"].render(screen=kwargs["screen"], current_state=kwargs["current_state"])
         self.pause_overlay.blit(self.pause_message.image, self.pause_message.rect)
+        self.pause_overlay.blit(self.resume_button.image, self.resume_button.rect)
+        self.pause_overlay.blit(self.quit_button.image, self.quit_button.rect)
 
 
 class Game(Scene):
@@ -71,7 +77,7 @@ class Game(Scene):
         self.wave_handler = WaveHandler(self.path.waypoints[0])
         self.enemies_alive = 0
 
-        # Toolbar items
+        # UI items
         self.next_wave_button = Button(pygame.Rect(100, 25, 160, 50), "Next Wave", BUTTON_COLOUR, TEXT_COLOUR, 40)
         self.pause_button = Button(pygame.Rect(270, 25, 95, 50), "Pause", BUTTON_DISABLED_COLOUR, TEXT_COLOUR, 40)
         self.wave_display = TextDisplay(pygame.Rect(375, 25, 210, 50), "Current Wave: " + str(self.wave_handler.current_wave_number), TEXT_COLOUR, 30)
@@ -88,7 +94,7 @@ class Game(Scene):
         screen = kwargs['screen']
         screen.fill(pygame.Color("BLACK"))
 
-        # Render Toolbar
+        # Render UI
         screen.blit(self.next_wave_button.image, self.next_wave_button.rect)
         screen.blit(self.pause_button.image, self.pause_button.rect)
         screen.blit(self.wave_display.image, self.wave_display.rect)
@@ -103,17 +109,16 @@ class Game(Scene):
         self.effects.draw(self.game_screen)
 
         # Update mouse selector
-        if kwargs["current_state"] != STATE_PAUSED:
+        if kwargs["current_state"] != STATE_PAUSED:  # Won't display mouse selector if game is paused
             mouse_pos = pygame.mouse.get_pos()
-
             mouse_pos = (mouse_pos[0] - self.offset[0], mouse_pos[1] - self.offset[1])  # Accounts for the border
             if not self.path.contains(mouse_pos):
                 if 0 < mouse_pos[0] < self.path.rect.width and 0 < mouse_pos[1] < self.path.rect.height:
-                    if pygame.mouse.get_pressed()[0]:
+                    if pygame.mouse.get_pressed()[0]:  # Mouse selector is bigger if the mouse button is down
                         size = 5
                     else:
                         size = 2
-                    pygame.draw.rect(self.game_screen, pygame.Color("WHITE"),
+                    pygame.draw.rect(self.game_screen, MOUSE_SELECTOR_COLOUR,
                                      pygame.Rect(mouse_pos[0] - (mouse_pos[0] % GRID_SIZE),
                                                  mouse_pos[1] - (mouse_pos[1] % GRID_SIZE),
                                                  GRID_SIZE, GRID_SIZE), size)
