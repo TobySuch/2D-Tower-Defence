@@ -1,6 +1,7 @@
 from UI import *
-from Lib import *
 from Towers import *
+from Wave import *
+from Enemies import *
 
 
 class Scene:
@@ -55,6 +56,8 @@ class Game(Scene):
                          [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
                           (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11),(7, 11), (7, 8), (5, 8),
                           (5, 11), (3, 11), (3, 8), (-1, 8)])
+        self.wave_handler = WaveHandler(self.path.waypoints[0])
+        self.enemies_alive = 0
 
     def render(self, **kwargs):
         screen = kwargs['screen']
@@ -66,10 +69,13 @@ class Game(Scene):
         # Render Game
         self.game_screen.fill(FRAME_COLOUR)
         self.game_screen.blit(self.path.image, (0, 0))
-        self.enemies.update()
+        self.wave_handler.update(self.enemies)
+        self.enemies.update(self.path.waypoints, GRID_SIZE)
         self.towers.update(self.enemies, self.effects, self.game_screen)
         self.effects.update()
+        self.enemies.draw(self.game_screen)
         self.towers.draw(self.game_screen)
+        self.effects.draw(self.game_screen)
 
         # Update mouse selector
         mouse_pos = pygame.mouse.get_pos()

@@ -48,10 +48,11 @@ while not done:
                     current_scene = SCENE_GAME
                     current_state = STATE_PRE_WAVE
             elif event.next_state == STATE_WAVE:
-                # Send a message to wave handler to start wave
-                SCENE_GAME.next_wave_button.background_colour = pygame.Color("RED")
-                # Enable pause button
                 current_state = STATE_WAVE
+                SCENE_GAME.wave_handler.start_wave()
+                SCENE_GAME.next_wave_button.background_colour = pygame.Color("RED")
+                SCENE_GAME.enemies_alive = SCENE_GAME.wave_handler.current_wave.enemies
+                # TODO: Enable pause button
 
         # Main menu events
         if current_scene == SCENE_MAIN_MENU:
@@ -68,7 +69,7 @@ while not done:
                 if event.button == 1:
                     # Check if toolbar buttons were pressed
                     if SCENE_GAME.next_wave_button.contains(event.pos):
-                        if current_state == STATE_PRE_WAVE:
+                        if current_state == STATE_PRE_WAVE:  # Button can only be pressed during pre-wave
                             pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_WAVE))
                     else:
                         # Placed a tower
@@ -79,8 +80,22 @@ while not done:
                                 if tower is not None and tower.value <= SCENE_GAME.money:
                                     SCENE_GAME.towers.add(tower)
                                     SCENE_GAME.money -= tower.value
+            elif event.type == ENEMY_KILLED:
+                SCENE_GAME.enemies_alive -= 1
+                SCENE_GAME.money += event.enemy.value
+                event.enemy.kill()
+            elif event.type == ENEMY_REACHED_END:
+                SCENE_GAME.lives -= 1
+                if SCENE_GAME.lives <= 0:
+                    # Game Over
+                    pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_GAME_OVER))
+                else:
+                    # Move the enemy back to the start
+                    event.enemy.current_waypoint = 1
+                    event.enemy.rect.center = gridCoordToPos(SCENE_GAME.path.waypoints[0], GRID_SIZE)
+                    event.enemy.distance_travelled = 0
 
-# Display frame
+    # Display frame
     pygame.display.flip()
 
     # Keep frame rate constant

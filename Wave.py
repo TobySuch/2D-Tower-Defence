@@ -21,22 +21,18 @@ class Wave:
 
 
 class WaveHandler:
-    def __init__(self, spawn_loc, start_wave=1, interwave=2):
+    def __init__(self, spawn_loc, start_wave=1):
         self.spawn_loc = spawn_loc
         self.current_wave_number = start_wave
-        self.interwave = 60 * interwave
-        self.delay = 0
         self.current_wave = None
+        self.in_wave = False
+
+    def start_wave(self):
+        self.in_wave = True
+        self.current_wave_number += 1
+        self.current_wave = Wave(self.current_wave_number, self.spawn_loc)
 
     def update(self, enemies):
-        if self.current_wave is None:
-            self.delay = self.interwave
-            self.current_wave = Wave(self.current_wave_number, self.spawn_loc)
-            pygame.event.post(pygame.event.Event(WAVE_STARTED, wave=self.current_wave))
-        elif self.current_wave.enemies > 0:
+        if self.in_wave:
             self.current_wave.update(enemies)
-        elif len(enemies.sprites()) <= 0 and self.delay > 0:
-            self.delay -= 1
-        elif len(enemies.sprites()) <= 0 and self.delay <= 0:
-            self.current_wave = None
-            self.current_wave_number += 1
+
