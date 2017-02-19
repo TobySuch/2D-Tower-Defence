@@ -101,6 +101,8 @@ while not done:
         elif current_scene == SCENE_GAME:
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
+                    print(adjustCoordsByOffset(event.pos, SCENE_GAME.shop.image.get_abs_offset()))
+                    print(SCENE_GAME.shop.buttons[0].rect.topleft)
                     # Check if toolbar buttons were pressed
                     if SCENE_GAME.next_wave_button.contains(event.pos):
                         if current_state == STATE_PRE_WAVE:  # Button can only be pressed during pre-wave
@@ -108,6 +110,9 @@ while not done:
                     elif SCENE_GAME.pause_button.contains(event.pos):
                         if current_state == STATE_WAVE:  # Button can only be pressed during the wave
                             pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PAUSED))
+                    # Check if shop button was pressed
+                    elif SCENE_GAME.shop.button_pressed(adjustCoordsByOffset(event.pos, SCENE_GAME.shop.image.get_abs_offset())) != -1:
+                        SCENE_GAME.selected_tower = SCENE_GAME.shop.button_pressed(adjustCoordsByOffset(event.pos, SCENE_GAME.shop.image.get_abs_offset()))
                     else:
                         # Placed a tower
                         mouse_pos = (event.pos[0]-SCENE_GAME.offset[0], event.pos[1]-SCENE_GAME.offset[1])  # To account for the 100x100 border around the outside

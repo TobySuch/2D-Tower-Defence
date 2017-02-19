@@ -13,7 +13,8 @@ def createTower(pos, tower_choice, tower_models, path, towers):
 
 
 class TowerModel:
-    def __init__(self, damage, fire_rate, range, value, fire_colour, sprite_location):
+    def __init__(self, name, damage, fire_rate, range, value, fire_colour, sprite_location):
+        self.name = name
         self.damage = damage
         self.fire_rate = fire_rate
         self.range = range

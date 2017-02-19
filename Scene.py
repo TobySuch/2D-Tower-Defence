@@ -79,7 +79,9 @@ class Game(Scene):
 
         # Tower models (available towers to build)
         self.tower_models = []
-        tower_model = TowerModel(1, 20, 2, 100, pygame.Color("GREEN"), 'assets/tower1.png')
+        tower_model = TowerModel("Basic Tower", 1, 20, 2, 100, pygame.Color("GREEN"), 'assets/tower1.png')
+        self.tower_models.append(tower_model)
+        tower_model = TowerModel("Sniper Tower", 3, 100, 5, 300, pygame.Color("WHITE"), 'assets/tower2.png')
         self.tower_models.append(tower_model)
 
         # Top bar elements
@@ -91,7 +93,7 @@ class Game(Scene):
         self.money_display = TextDisplay(pygame.Rect(1015, 25, 160, 50), "Money: " + str(self.money), TEXT_COLOUR, 30)
 
         # Shop elements
-        self.shop = Shop(screen, pygame.Rect(adjustCoordsByOffset(self.path.rect.topright, (-self.offset[0], -self.offset[1])), (400, self.path.rect.height)))
+        self.shop = Shop(screen, pygame.Rect(adjustCoordsByOffset(self.path.rect.topright, (-self.offset[0], -self.offset[1])), (400, self.path.rect.height)), self.tower_models)
 
     def update(self, **kwargs):
         self.wave_handler.update(self.enemies)
@@ -120,7 +122,7 @@ class Game(Scene):
         self.effects.draw(self.game_screen)
 
         # Render shop
-        self.shop.render()
+        self.shop.render(self.selected_tower)
 
         # Update mouse selector
         if kwargs["current_state"] != STATE_PAUSED:  # Won't display mouse selector if game is paused
