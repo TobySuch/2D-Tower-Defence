@@ -5,12 +5,14 @@ from Lib import *
 pygame.init()
 display_info = pygame.display.Info()
 
-# Constants
-SCREEN_SIZE = (display_info.current_w, display_info.current_h)
-
-# Global variables
-screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
-clock = pygame.time.Clock()
+# Constants - Allows for game to be displayed non fullscreen (which can display better)
+FULLSCREEN = False
+if FULLSCREEN:
+    SCREEN_SIZE = (display_info.current_w, display_info.current_h)
+    screen = pygame.display.set_mode(SCREEN_SIZE, pygame.FULLSCREEN)
+else:
+    SCREEN_SIZE = (1500, 1000)
+    screen = pygame.display.set_mode(SCREEN_SIZE)
 
 # Setup scenes
 SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, screen)
@@ -21,6 +23,7 @@ SCENE_PAUSE = Pause(SCREEN_SIZE, screen)
 done = False
 current_state = STATE_MAIN_MENU
 current_scene = SCENE_MAIN_MENU
+clock = pygame.time.Clock()
 
 # Main loop
 while not done:
@@ -110,10 +113,10 @@ while not done:
                         mouse_pos = (event.pos[0]-SCENE_GAME.offset[0], event.pos[1]-SCENE_GAME.offset[1])  # To account for the 100x100 border around the outside
                         if not SCENE_GAME.path.contains(mouse_pos):
                             if 0 < mouse_pos[0] < SCENE_GAME.path.rect.width and 0 < mouse_pos[1] < SCENE_GAME.path.rect.height:  # Make sure tower is on game screen
-                                tower = createTower(gridCoordToPos(posToGridCoords(mouse_pos, GRID_SIZE), GRID_SIZE), SCENE_GAME.path, SCENE_GAME.towers)
-                                if tower is not None and tower.value <= SCENE_GAME.money:
+                                tower = createTower(gridCoordToPos(posToGridCoords(mouse_pos, GRID_SIZE), GRID_SIZE), SCENE_GAME.selected_tower, SCENE_GAME.tower_models, SCENE_GAME.path, SCENE_GAME.towers)
+                                if tower is not None and tower.model.value <= SCENE_GAME.money:
                                     SCENE_GAME.towers.add(tower)
-                                    SCENE_GAME.money -= tower.value
+                                    SCENE_GAME.money -= tower.model.value
             elif event.type == ENEMY_KILLED:
                 SCENE_GAME.enemies_alive -= 1
                 SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)

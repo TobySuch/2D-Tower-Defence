@@ -1,4 +1,4 @@
-import pygame
+from Lib import *
 
 
 class Button(pygame.sprite.Sprite):
@@ -63,3 +63,19 @@ class TextDisplay(pygame.sprite.Sprite):
         text_surf = font.render(self.text, 1, self.text_colour)
         self.image.blit(text_surf, (self.rect.width / 2 - text_surf.get_width() / 2,
                                     self.rect.height / 2 - text_surf.get_height() / 2))
+
+class ShopButton(Button):
+    def __init__(self, tower_models):
+        pygame.sprite.Sprite.__init__(self)
+
+
+
+
+class Shop():
+    def __init__(self, screen, rect):
+        self.rect = rect
+        self.image = screen.subsurface(rect)
+        self.image.fill(SHOP_BACKGROUND_COLOUR)
+
+    def render(self):
+        self.image.fill(SHOP_BACKGROUND_COLOUR)

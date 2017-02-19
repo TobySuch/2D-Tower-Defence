@@ -42,10 +42,10 @@ class Pause(Scene):
         self.rect = pygame.Rect(100, 100, screen_size[0]-200, screen_size[1]-200)
         self.pause_overlay = screen.subsurface(self.rect)
         self.pause_message = TextDisplay(pygame.Rect(360, 200, 180, 60), "PAUSED", TEXT_COLOUR, 50)
-        self.resume_button = Button(pygame.Rect(225, 340, 200, 75),
+        self.resume_button = Button(pygame.Rect(200, 340, 225, 75),
                                     "Resume", BUTTON_COLOUR, TEXT_COLOUR, 50)
-        self.quit_button = Button(pygame.Rect(475, 340, 200, 75),
-                                  "Quit", BUTTON_COLOUR, TEXT_COLOUR, 50)
+        self.quit_button = Button(pygame.Rect(475, 340, 225, 75),
+                                  "Main Menu", BUTTON_COLOUR, TEXT_COLOUR, 50)
 
     def render(self, **kwargs):
         kwargs["SCENE_GAME"].render(screen=kwargs["screen"], current_state=kwargs["current_state"])
@@ -69,7 +69,7 @@ class Game(Scene):
         # Game variables
         self.lives = 20
         self.money = 200
-        self.selected_tower = TOWER_BASIC
+        self.selected_tower = 0
         self.path = Path(PATH_COLOUR,
                          [(1, -1), (1, 5), (4, 5), (4, 1), (6, 1), (6, 5), (8, 5), (8, 1), (17, 1), (17, 5), (14, 5),
                           (14, 8), (17, 8), (17, 13), (12, 13), (12, 8), (9, 8), (9, 11), (7, 11), (7, 8), (5, 8),
@@ -77,29 +77,40 @@ class Game(Scene):
         self.wave_handler = WaveHandler(self.path.waypoints[0])
         self.enemies_alive = 0
 
-        # UI items
+        # Tower models (available towers to build)
+        self.tower_models = []
+        tower_model = TowerModel(1, 20, 2, 100, pygame.Color("GREEN"), 'assets/tower1.png')
+        self.tower_models.append(tower_model)
+
+        # Top bar elements
         self.next_wave_button = Button(pygame.Rect(100, 25, 160, 50), "Next Wave", BUTTON_COLOUR, TEXT_COLOUR, 40)
         self.pause_button = Button(pygame.Rect(270, 25, 95, 50), "Pause", BUTTON_DISABLED_COLOUR, TEXT_COLOUR, 40)
         self.wave_display = TextDisplay(pygame.Rect(375, 25, 210, 50), "Current Wave: " + str(self.wave_handler.current_wave_number), TEXT_COLOUR, 30)
         self.enemy_count_display = TextDisplay(pygame.Rect(595, 25, 280, 50), "Enemies Remaining: " + str(self.enemies_alive), TEXT_COLOUR, 30)
         self.lives_display = TextDisplay(pygame.Rect(885, 25, 120, 50), "Lives: " + str(self.lives), TEXT_COLOUR, 30)
+        self.money_display = TextDisplay(pygame.Rect(1015, 25, 160, 50), "Money: " + str(self.money), TEXT_COLOUR, 30)
+
+        # Shop elements
+        self.shop = Shop(screen, pygame.Rect(adjustCoordsByOffset(self.path.rect.topright, (-self.offset[0], -self.offset[1])), (400, self.path.rect.height)))
 
     def update(self, **kwargs):
         self.wave_handler.update(self.enemies)
         self.enemies.update(self.path.waypoints, GRID_SIZE)
         self.towers.update(self.enemies, self.effects, self.game_screen)
         self.effects.update()
+        self.money_display.text = "Money: " + str(self.money)
 
     def render(self, **kwargs):
         screen = kwargs['screen']
         screen.fill(pygame.Color("BLACK"))
 
-        # Render UI
+        # Render top bar
         screen.blit(self.next_wave_button.image, self.next_wave_button.rect)
         screen.blit(self.pause_button.image, self.pause_button.rect)
         screen.blit(self.wave_display.image, self.wave_display.rect)
         screen.blit(self.enemy_count_display.image, self.enemy_count_display.rect)
         screen.blit(self.lives_display.image, self.lives_display.rect)
+        screen.blit(self.money_display.image, self.money_display.rect)
 
         # Render Game
         self.game_screen.fill(FRAME_COLOUR)
@@ -107,6 +118,9 @@ class Game(Scene):
         self.enemies.draw(self.game_screen)
         self.towers.draw(self.game_screen)
         self.effects.draw(self.game_screen)
+
+        # Render shop
+        self.shop.render()
 
         # Update mouse selector
         if kwargs["current_state"] != STATE_PAUSED:  # Won't display mouse selector if game is paused
