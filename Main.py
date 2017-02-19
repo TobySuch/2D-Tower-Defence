@@ -101,8 +101,6 @@ while not done:
         elif current_scene == SCENE_GAME:
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
-                    print(adjustCoordsByOffset(event.pos, SCENE_GAME.shop.image.get_abs_offset()))
-                    print(SCENE_GAME.shop.buttons[0].rect.topleft)
                     # Check if toolbar buttons were pressed
                     if SCENE_GAME.next_wave_button.contains(event.pos):
                         if current_state == STATE_PRE_WAVE:  # Button can only be pressed during pre-wave

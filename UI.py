@@ -99,7 +99,6 @@ class Shop():
     def button_pressed(self, point):
         """Returns the index of the button if one was pressed, or -1 if not"""
         for i in range(len(self.buttons)):
-            print(i)
             if self.buttons[i].contains(point):
                 return i
         return -1
