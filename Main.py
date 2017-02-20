@@ -19,6 +19,7 @@ else:
 SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, screen)
 SCENE_GAME = None  # This scene is not initialised as it is created when they click play
 SCENE_PAUSE = Pause(SCREEN_SIZE, screen)
+SCENE_GAME_OVER = GameOver(SCREEN_SIZE, screen)
 
 # State holders
 done = False
@@ -79,6 +80,10 @@ while not done:
             elif event.next_state == STATE_MAIN_MENU:
                 current_state = STATE_MAIN_MENU
                 current_scene = SCENE_MAIN_MENU
+            elif event.next_state == STATE_GAME_OVER:
+                current_state = STATE_GAME_OVER
+                current_scene = SCENE_GAME_OVER
+                SCENE_GAME_OVER.survival_message.text = "You survived until wave " + str(SCENE_GAME.wave_handler.current_wave_number)
 
         # Main menu events
         if current_scene == SCENE_MAIN_MENU:
@@ -88,6 +93,13 @@ while not done:
                         pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PRE_WAVE))
                     elif SCENE_MAIN_MENU.quit_button.contains(event.pos):
                         pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+        # Game over events
+        elif current_scene == SCENE_GAME_OVER:
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    if SCENE_GAME_OVER.main_menu_button.contains(event.pos):
+                        pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_MAIN_MENU))
 
         # Pause menu events
         if current_scene == SCENE_PAUSE:
@@ -101,7 +113,7 @@ while not done:
         # In game events
         elif current_scene == SCENE_GAME:
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
+                if event.button == 1:  # Left click
                     # Check if toolbar buttons were pressed
                     if SCENE_GAME.next_wave_button.contains(event.pos):
                         if current_state == STATE_PRE_WAVE:  # Button can only be pressed during pre-wave
@@ -121,6 +133,12 @@ while not done:
                                 if tower is not None and tower.model.value <= SCENE_GAME.money:
                                     SCENE_GAME.towers.add(tower)
                                     SCENE_GAME.money -= tower.model.value
+                elif event.button == 3:  # Right click
+                    mouse_pos = (adjustCoordsByOffset(event.pos, SCENE_GAME.offset))  # To account for the 100x100 border around the outside
+                    for tower in SCENE_GAME.towers.sprites():
+                        if tower.rect.collidepoint(mouse_pos):
+                            tower.kill()
+                            SCENE_GAME.money += tower.model.value//2
 
             elif event.type == ENEMY_KILLED:
                 SCENE_GAME.enemies_alive -= 1
@@ -135,7 +153,6 @@ while not done:
                 SCENE_GAME.lives_display.text = "Lives: " + str(SCENE_GAME.lives)
                 if SCENE_GAME.lives <= 0:
                     # Game Over
-                    # TODO: Implement Game Over
                     pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_GAME_OVER))
                 else:
                     # Move the enemy back to the start

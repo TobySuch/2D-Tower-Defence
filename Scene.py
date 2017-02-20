@@ -23,6 +23,20 @@ class Scene:
         pass
 
 
+class GameOver(Scene):
+    def __init__(self, screen_size, screen):
+        self.rect = pygame.Rect((0, 0), screen_size)
+        self.screen = screen.subsurface(self.rect)
+        self.title = TextDisplay(pygame.Rect((screen_size[0]//2-300, screen_size[1]//3), (600, 100)), "GAME OVER", TEXT_COLOUR, 100)
+        self.survival_message = TextDisplay(pygame.Rect((screen_size[0]//2-300, screen_size[1]//2), (600, 100)), "You survived until wave 999", TEXT_COLOUR, 50)
+        self.main_menu_button = Button(pygame.Rect((screen_size[0]//2-225, 2*screen_size[1]//3-50), (450, 100)), "Main Menu", BUTTON_COLOUR, TEXT_COLOUR, 100)
+
+    def render(self, **kwargs):
+        self.screen.blit(self.title.image, self.title.rect)
+        self.screen.blit(self.survival_message.image, self.survival_message.rect)
+        self.screen.blit(self.main_menu_button.image, self.main_menu_button.rect)
+
+
 class MainMenu(Scene):
     def __init__(self, screen_size, screen):
         self.rect = pygame.Rect(0, 0, screen_size[0], screen_size[1])
@@ -131,7 +145,7 @@ class Game(Scene):
             mouse_pos = (mouse_pos[0] - self.offset[0], mouse_pos[1] - self.offset[1])  # Accounts for the border
             if not self.path.contains(mouse_pos):
                 if 0 < mouse_pos[0] < self.path.rect.width and 0 < mouse_pos[1] < self.path.rect.height:
-                    if pygame.mouse.get_pressed()[0]:  # Mouse selector is bigger if the mouse button is down
+                    if pygame.mouse.get_pressed()[0] or pygame.mouse.get_pressed()[2]:  # Mouse selector is bigger if the mouse button is down
                         size = 5
                     else:
                         size = 2
