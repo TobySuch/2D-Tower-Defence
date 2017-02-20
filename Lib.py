@@ -33,6 +33,10 @@ TOWER_BOUGHT = pygame.USEREVENT+3
 EVENT_STATE_CHANGED = pygame.USEREVENT+4
 
 
+def negateCoords(coords):
+    return tuple([-coords[0], -coords[1]])
+
+
 def adjustCoordsByOffset(coords, offset):
     return tuple([coords[0]-offset[0], coords[1]-offset[1]])
 

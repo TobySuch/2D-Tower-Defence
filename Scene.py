@@ -5,6 +5,7 @@ from Enemies import *
 
 
 class Scene:
+    """Abstract class"""
     def __init__(self, screen_size, screen):
         """Override in child classes"""
         # Creates a sub surface as the game screen.
@@ -94,6 +95,8 @@ class Game(Scene):
 
         # Shop elements
         self.shop = Shop(screen, pygame.Rect(adjustCoordsByOffset(self.path.rect.topright, (-self.offset[0], -self.offset[1])), (400, self.path.rect.height)), self.tower_models)
+
+        self.effects.add(SpriteSheet((50, 50), "explosion.png"))
 
     def update(self, **kwargs):
         self.wave_handler.update(self.enemies)

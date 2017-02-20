@@ -6,6 +6,7 @@ pygame.init()
 display_info = pygame.display.Info()
 
 # Constants - Allows for game to be displayed non fullscreen (which can display better)
+# Fullscreen works best if using a wide screen display (16:9 or better)
 FULLSCREEN = False
 if FULLSCREEN:
     SCREEN_SIZE = (display_info.current_w, display_info.current_h)
@@ -16,7 +17,7 @@ else:
 
 # Setup scenes
 SCENE_MAIN_MENU = MainMenu(SCREEN_SIZE, screen)
-SCENE_GAME = None  # This scene is not initialised as it will be reset when they click play
+SCENE_GAME = None  # This scene is not initialised as it is created when they click play
 SCENE_PAUSE = Pause(SCREEN_SIZE, screen)
 
 # State holders
@@ -113,13 +114,14 @@ while not done:
                         SCENE_GAME.selected_tower = SCENE_GAME.shop.button_pressed(adjustCoordsByOffset(event.pos, SCENE_GAME.shop.image.get_abs_offset()))
                     else:
                         # Placed a tower
-                        mouse_pos = (event.pos[0]-SCENE_GAME.offset[0], event.pos[1]-SCENE_GAME.offset[1])  # To account for the 100x100 border around the outside
+                        mouse_pos = (adjustCoordsByOffset(event.pos, SCENE_GAME.offset))  # To account for the 100x100 border around the outside
                         if not SCENE_GAME.path.contains(mouse_pos):
                             if 0 < mouse_pos[0] < SCENE_GAME.path.rect.width and 0 < mouse_pos[1] < SCENE_GAME.path.rect.height:  # Make sure tower is on game screen
                                 tower = createTower(gridCoordToPos(posToGridCoords(mouse_pos, GRID_SIZE), GRID_SIZE), SCENE_GAME.selected_tower, SCENE_GAME.tower_models, SCENE_GAME.path, SCENE_GAME.towers)
                                 if tower is not None and tower.model.value <= SCENE_GAME.money:
                                     SCENE_GAME.towers.add(tower)
                                     SCENE_GAME.money -= tower.model.value
+
             elif event.type == ENEMY_KILLED:
                 SCENE_GAME.enemies_alive -= 1
                 SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)

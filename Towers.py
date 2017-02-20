@@ -47,7 +47,7 @@ class Tower(pygame.sprite.Sprite):
             if target is not None:
                 # FIRE ZE MISSILEZZ!
                 target.health -= self.model.damage
-                effects.add(Effect(self.model.fire_colour, target.rect.center, self.rect.center, 2, screen.get_size()))
+                effects.add(ShootEffect(self.model.fire_colour, target.rect.center, self.rect.center, 2, screen.get_size()))
                 if target.health <= 0:
                     target.is_dead = True
                     pygame.event.post(pygame.event.Event(ENEMY_KILLED, enemy=target))
