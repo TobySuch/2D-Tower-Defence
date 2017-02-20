@@ -127,6 +127,7 @@ while not done:
                 SCENE_GAME.enemy_count_display.text = "Enemies Remaining: " + str(SCENE_GAME.enemies_alive)
                 SCENE_GAME.money += event.enemy.value
                 event.enemy.kill()
+                SCENE_GAME.effects.add(SpriteSheet(event.enemy.rect.center, 'assets/explosion.png'))
                 if SCENE_GAME.enemies_alive <= 0:
                     pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_PRE_WAVE))
             elif event.type == ENEMY_REACHED_END:

@@ -10,9 +10,9 @@ def createEnemy(pos):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, pos, speed, health, current_waypoint=1):
         pygame.sprite.Sprite.__init__(self)
-        self.base_sprite = pygame.image.load('assets/enemy1.png')
-        self.image = self.base_sprite
-        self.rect = self.image.get_rect()
+        self.spritesheet = pygame.image.load('assets/enemy1.png')
+        self.image = None
+        self.rect = pygame.Rect(0, 0, 20, 20)
         self.rect.center = pos
         self.speed = speed
         self.health = health
@@ -21,9 +21,24 @@ class Enemy(pygame.sprite.Sprite):
         self.value = 5
         self.distance_travelled = 0
         self.is_dead = False
+        self.images = []
+        self.current_image = 0
+        self.load_spritesheet(20, 20)
+
+    def load_spritesheet(self, sprite_width, sprite_height):
+        for y in range(0, self.spritesheet.get_height(), sprite_height):
+            for x in range(0, self.spritesheet.get_width(), sprite_width):
+                sprite = pygame.Surface((sprite_width, sprite_height), pygame.SRCALPHA)
+                sprite.blit(self.spritesheet, (0, 0), pygame.Rect(x, y, sprite_width, sprite_height))
+                self.images.append(sprite)
 
     def update(self, waypoints, grid_size):
         waypoint = waypoints[self.current_waypoint]
+
+        self.image = self.images[self.current_image]
+        self.current_image += 1
+        if self.current_image >= len(self.images):
+            self.current_image = 1
 
         if self.direction is None or self.rect.collidepoint(gridCoordToPos(waypoint, grid_size)):
             if self.rect.collidepoint(gridCoordToPos(waypoint, grid_size)):
@@ -36,16 +51,6 @@ class Enemy(pygame.sprite.Sprite):
             waypoint = waypoints[self.current_waypoint]
             self.direction = getDirection(posToGridCoords(self.rect.center, grid_size), waypoint)
 
-            # Set orientation
-            if self.direction == LEFT:
-                self.image = pygame.transform.rotate(self.base_sprite, 90)
-            elif self.direction == DOWN:
-                self.image = pygame.transform.rotate(self.base_sprite, 180)
-            elif self.direction == RIGHT:
-                self.image = pygame.transform.rotate(self.base_sprite, 270)
-            else:
-                self.image = pygame.transform.rotate(self.base_sprite, 0)
-
         # Move towards next waypoint
         self.distance_travelled += self.speed
         if self.direction == UP:
@@ -55,10 +60,13 @@ class Enemy(pygame.sprite.Sprite):
         elif self.direction == LEFT:
             self.rect.move_ip((-self.speed, 0))
             self.rect.centery = waypoint[1] * grid_size + grid_size // 2
+            self.image = pygame.transform.rotate(self.image, 90)  # Set orientation
         elif self.direction == DOWN:
             self.rect.move_ip((0, self.speed))
             self.rect.centerx = waypoint[0] * grid_size + grid_size // 2
+            self.image = pygame.transform.rotate(self.image, 180)
         else:
             self.rect.move_ip((self.speed, 0))
             self.rect.centery = waypoint[1] * grid_size + grid_size // 2
+            self.image = pygame.transform.rotate(self.image, 270)
 
