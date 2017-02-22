@@ -4,6 +4,8 @@ from Lib import *
 # Pygame init
 pygame.init()
 display_info = pygame.display.Info()
+pygame.display.set_caption("Tower Defence Game")
+pygame.display.set_icon(pygame.image.load("assets/tower1.png"))
 pygame.mixer.music.load('assets/song.mp3')  # Pygame doesn't like the characters in the song name so I had to rename it
                                             # Original name: Quando a revolução vier
                                             # Source: https://soundcloud.com/ovolandia/quando-a-revolucao-vier

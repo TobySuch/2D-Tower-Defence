@@ -46,9 +46,9 @@ class MainMenu(Scene):
 
         self.instructions = []
         self.instructions.append(TextDisplay(pygame.Rect(0, 300, screen_size[0], 65), "Left click a free space to place a tower", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 365, screen_size[0], 65), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 365, screen_size[0], 65), "Click a tower in the shop or press a number to change the tower you place", TEXT_COLOUR, 50))
         self.instructions.append(TextDisplay(pygame.Rect(0, 430, screen_size[0], 65), "Right click a tower to sell it", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 495, screen_size[0], 65), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 495, screen_size[0], 65), "Press 'Next wave' or press the space bar to start the wave", TEXT_COLOUR, 50))
         self.instructions.append(TextDisplay(pygame.Rect(0, 560, screen_size[0], 65), "Try to survive as long as you can", TEXT_COLOUR, 50))
 
         self.play_button = Button(pygame.Rect((screen_size[0]/2) - 150, 630, 150, 80),
