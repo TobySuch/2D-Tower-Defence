@@ -45,16 +45,18 @@ class MainMenu(Scene):
         self.title = TextDisplay(pygame.Rect(0, 100, screen_size[0], 100), "Tower Defence Game", TEXT_COLOUR, 100)
 
         self.instructions = []
-        self.instructions.append(TextDisplay(pygame.Rect(0, 300, screen_size[0], 50), "Left click a free space to place a tower", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 350, screen_size[0], 50), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 400, screen_size[0], 50), "Right click a tower to sell it", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 450, screen_size[0], 50), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(0, 500, screen_size[0], 50), "Try to survive as long as you can", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 300, screen_size[0], 65), "Left click a free space to place a tower", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 365, screen_size[0], 65), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 430, screen_size[0], 65), "Right click a tower to sell it", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 495, screen_size[0], 65), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 560, screen_size[0], 65), "Try to survive as long as you can", TEXT_COLOUR, 50))
 
-        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 150, (2*screen_size[1]/3) - 50, 150, 80),
+        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 150, 630, 150, 80),
                                   "Play", BUTTON_COLOUR, TEXT_COLOUR, 50)
-        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 50, (2*screen_size[1]/3) - 50, 150, 80),
+        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 50, 630, 150, 80),
                                   "Quit", BUTTON_COLOUR, TEXT_COLOUR, 50)
+
+        self.music_credit = TextDisplay(pygame.Rect(100, 900, 700, 50), "Music: 'Quando a revolução vier' by OVO (Released under CC)", TEXT_COLOUR, 30)
 
     def render(self, **kwargs):
         self.menu_screen.blit(self.title.image, self.title.rect)
@@ -62,6 +64,7 @@ class MainMenu(Scene):
             self.menu_screen.blit(instruction.image, instruction.rect)
         self.menu_screen.blit(self.play_button.image, self.play_button.rect)
         self.menu_screen.blit(self.quit_button.image, self.quit_button.rect)
+        self.menu_screen.blit(self.music_credit.image, self.music_credit.rect)
 
 
 class Pause(Scene):

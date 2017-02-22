@@ -4,7 +4,9 @@ from Lib import *
 # Pygame init
 pygame.init()
 display_info = pygame.display.Info()
-pygame.mixer.music.load('assets/song.mp3')
+pygame.mixer.music.load('assets/song.mp3')  # Pygame doesn't like the characters in the song name so I had to rename it
+                                            # Original name: Quando a revolução vier
+                                            # Source: https://soundcloud.com/ovolandia/quando-a-revolucao-vier
 
 # Constants - Allows for game to be displayed non fullscreen (which can display better)
 # Fullscreen works best if using a wide screen display (16:9 or better)
