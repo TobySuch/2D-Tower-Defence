@@ -42,19 +42,22 @@ class MainMenu(Scene):
         self.rect = pygame.Rect(0, 0, screen_size[0], screen_size[1])
         self.menu_screen = screen.subsurface(self.rect)
 
-        self.instructions = []
-        self.instructions.append(TextDisplay(pygame.Rect(200, 200, 1000, 50), "Left click a free space to place a tower", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(100, 250, 1500, 50), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(200, 300, 1000, 50), "Right click a tower to sell it", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(200, 350, 1000, 50), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
-        self.instructions.append(TextDisplay(pygame.Rect(200, 400, 1000, 50), "Try to survive as long as you can", TEXT_COLOUR, 50))
+        self.title = TextDisplay(pygame.Rect(0, 100, screen_size[0], 100), "Tower Defence Game", TEXT_COLOUR, 100)
 
-        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 100, (screen_size[1]/2) - 50, 100, 50),
+        self.instructions = []
+        self.instructions.append(TextDisplay(pygame.Rect(0, 300, screen_size[0], 50), "Left click a free space to place a tower", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 350, screen_size[0], 50), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 400, screen_size[0], 50), "Right click a tower to sell it", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 450, screen_size[0], 50), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(0, 500, screen_size[0], 50), "Try to survive as long as you can", TEXT_COLOUR, 50))
+
+        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 150, (2*screen_size[1]/3) - 50, 150, 80),
                                   "Play", BUTTON_COLOUR, TEXT_COLOUR, 50)
-        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 50, (screen_size[1]/2) - 50, 100, 50),
+        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 50, (2*screen_size[1]/3) - 50, 150, 80),
                                   "Quit", BUTTON_COLOUR, TEXT_COLOUR, 50)
 
     def render(self, **kwargs):
+        self.menu_screen.blit(self.title.image, self.title.rect)
         for instruction in self.instructions:
             self.menu_screen.blit(instruction.image, instruction.rect)
         self.menu_screen.blit(self.play_button.image, self.play_button.rect)
@@ -103,9 +106,9 @@ class Game(Scene):
 
         # Tower models (available towers to build)
         self.tower_models = []
-        tower_model = TowerModel("Basic Tower", 1, 20, 2, 100, pygame.Color("GREEN"), 'assets/tower1.png')
+        tower_model = TowerModel("Basic Tower", 1, 20, 2, 100, pygame.Color("GREEN"), 'assets/tower1.png', "Low damage, low range, high firerate")
         self.tower_models.append(tower_model)
-        tower_model = TowerModel("Sniper Tower", 3, 100, 5, 300, pygame.Color("WHITE"), 'assets/tower2.png')
+        tower_model = TowerModel("Sniper Tower", 3, 100, 5, 300, pygame.Color("WHITE"), 'assets/tower2.png', "High damage, high range, low firerate")
         self.tower_models.append(tower_model)
 
         # Top bar elements

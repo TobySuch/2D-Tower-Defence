@@ -4,6 +4,7 @@ from Lib import *
 # Pygame init
 pygame.init()
 display_info = pygame.display.Info()
+pygame.mixer.music.load('assets/song.mp3')
 
 # Constants - Allows for game to be displayed non fullscreen (which can display better)
 # Fullscreen works best if using a wide screen display (16:9 or better)
@@ -27,8 +28,12 @@ current_state = STATE_MAIN_MENU
 current_scene = SCENE_MAIN_MENU
 clock = pygame.time.Clock()
 
+# Play music
+pygame.mixer.music.play(-1)
+
 # Main loop
 while not done:
+
     # Wipe currently displayed scene
     screen.fill(BACKGROUND_COLOUR)
 

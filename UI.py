@@ -82,19 +82,32 @@ class Shop():
     def __init__(self, screen, rect, tower_models):
         self.rect = rect
         self.image = screen.subsurface(rect)
-        self.image.fill(SHOP_BACKGROUND_COLOUR)
+        self.title = TextDisplay(pygame.Rect(50, 50, 300, 80), "Shop", TEXT_COLOUR, 60)
         self.tower_models = tower_models
         self.buttons = []
-        current_y = 50
+        self.info_popups = []
+        current_y = 250
         for tower in tower_models:
             self.buttons.append(ShopButton(tower, (50, current_y), 50, TEXT_COLOUR))
+            self.info_popups.append([Button(pygame.Rect(0, 500, 400, 80), "Cost: " + str(tower.value), SHOP_BACKGROUND_COLOUR, TEXT_COLOUR, 30),
+                                     Button(pygame.Rect(0, 580, 400, 80), tower.description, SHOP_BACKGROUND_COLOUR, TEXT_COLOUR, 25)])
             current_y += 100
 
     def render(self, selected):
+        mouse_pos = adjustCoordsByOffset(pygame.mouse.get_pos(), self.image.get_abs_offset())
         self.image.fill(SHOP_BACKGROUND_COLOUR)
+        self.image.blit(self.title.image, self.title.rect)
         for button in self.buttons:
             self.image.blit(button.image, button.rect)
         pygame.draw.rect(self.image, MOUSE_SELECTOR_COLOUR, self.buttons[selected].rect, 2)
+
+        for i in range(len(self.buttons)):
+            button = self.buttons[i]
+            if button.contains(mouse_pos):
+                popup = self.info_popups[i]
+                for p in popup:
+                    self.image.blit(p.image, p.rect)
+
 
     def button_pressed(self, point):
         """Returns the index of the button if one was pressed, or -1 if not"""
