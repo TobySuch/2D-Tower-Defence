@@ -42,12 +42,21 @@ class MainMenu(Scene):
         self.rect = pygame.Rect(0, 0, screen_size[0], screen_size[1])
         self.menu_screen = screen.subsurface(self.rect)
 
-        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 600, (screen_size[1]/2) - 100, 400, 200),
-                                  "Play", BUTTON_COLOUR, TEXT_COLOUR, 100)
-        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 200, (screen_size[1]/2) - 100, 400, 200),
-                                  "Quit", BUTTON_COLOUR, TEXT_COLOUR, 100)
+        self.instructions = []
+        self.instructions.append(TextDisplay(pygame.Rect(200, 200, 1000, 50), "Left click a free space to place a tower", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(100, 250, 1500, 50), "Click a different tower in the shop to change the tower you place", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(200, 300, 1000, 50), "Right click a tower to sell it", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(200, 350, 1000, 50), "Press 'Next wave' to unleash the enemies", TEXT_COLOUR, 50))
+        self.instructions.append(TextDisplay(pygame.Rect(200, 400, 1000, 50), "Try to survive as long as you can", TEXT_COLOUR, 50))
+
+        self.play_button = Button(pygame.Rect((screen_size[0]/2) - 100, (screen_size[1]/2) - 50, 100, 50),
+                                  "Play", BUTTON_COLOUR, TEXT_COLOUR, 50)
+        self.quit_button = Button(pygame.Rect((screen_size[0]/2) + 50, (screen_size[1]/2) - 50, 100, 50),
+                                  "Quit", BUTTON_COLOUR, TEXT_COLOUR, 50)
 
     def render(self, **kwargs):
+        for instruction in self.instructions:
+            self.menu_screen.blit(instruction.image, instruction.rect)
         self.menu_screen.blit(self.play_button.image, self.play_button.rect)
         self.menu_screen.blit(self.quit_button.image, self.quit_button.rect)
 
