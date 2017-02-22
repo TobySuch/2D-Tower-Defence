@@ -146,6 +146,14 @@ while not done:
                         if tower.rect.collidepoint(mouse_pos):
                             tower.kill()
                             SCENE_GAME.money += tower.model.value//2
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_1:
+                    SCENE_GAME.selected_tower = 0
+                elif event.key == pygame.K_2:
+                    SCENE_GAME.selected_tower = 1
+                elif event.key == pygame.K_SPACE:
+                    if current_state == STATE_PRE_WAVE:
+                        pygame.event.post(pygame.event.Event(EVENT_STATE_CHANGED, next_state=STATE_WAVE))
 
             elif event.type == ENEMY_KILLED:
                 SCENE_GAME.enemies_alive -= 1
