@@ -21,24 +21,21 @@ class Enemy(pygame.sprite.Sprite):
         self.value = 5
         self.distance_travelled = 0
         self.is_dead = False
-        self.images = []
-        self.current_image = 0
-        self.load_spritesheet(20, 20)
-
-    def load_spritesheet(self, sprite_width, sprite_height):
-        for y in range(0, self.spritesheet.get_height(), sprite_height):
-            for x in range(0, self.spritesheet.get_width(), sprite_width):
-                sprite = pygame.Surface((sprite_width, sprite_height), pygame.SRCALPHA)
-                sprite.blit(self.spritesheet, (0, 0), pygame.Rect(x, y, sprite_width, sprite_height))
-                self.images.append(sprite)
+        self.current_image = (0, 0)
 
     def update(self, waypoints, grid_size):
         waypoint = waypoints[self.current_waypoint]
 
-        self.image = self.images[self.current_image]
-        self.current_image += 1
-        if self.current_image >= len(self.images):
-            self.current_image = 1
+        self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
+        self.image.blit(self.spritesheet, (0, 0), pygame.Rect(self.current_image[0]*self.rect.width, self.current_image[1]*self.rect.height, self.rect.width, self.rect.height))
+
+        if self.current_image[0]+1 >= self.spritesheet.get_width()//self.rect.width:
+            if self.current_image[1]+1 >= self.spritesheet.get_height()//self.rect.height:
+                self.current_image = (0, 0)
+            else:
+                self.current_image = (0, self.current_image[1]+1)
+        else:
+            self.current_image = (self.current_image[0] + 1, self.current_image[1])
 
         if self.direction is None or self.rect.collidepoint(gridCoordToPos(waypoint, grid_size)):
             if self.rect.collidepoint(gridCoordToPos(waypoint, grid_size)):
