@@ -1,2 +1,2 @@
 # CS1830_01
-Turn based rogue like game
+Tower defense game written in Python
