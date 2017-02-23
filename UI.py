@@ -72,9 +72,9 @@ class ShopButton(Button):
         sprite = pygame.image.load(tower_model.sprite_location)
         font = pygame.font.SysFont("Arial", text_size)
         text_surf = font.render(tower_model.name, 1, text_colour)
-        self.rect = pygame.Rect(pos, (text_surf.get_rect().width + sprite.get_rect().width + 10, sprite.get_rect().height))
+        self.rect = pygame.Rect(pos, (text_surf.get_rect().width + sprite.get_rect().width + 10, sprite.get_rect().height + 10))
         self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
-        self.image.blit(sprite, (0, 0))
+        self.image.blit(sprite, (0, 5))
         self.image.blit(text_surf, (sprite.get_rect().width + 10, 0))
 
 
