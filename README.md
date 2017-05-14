@@ -1,2 +1,2 @@
-# CS1830_01
-Tower defense game written in Python
+# 2D Tower Defence
+Tower defense game written in Python 3 using Pygame
